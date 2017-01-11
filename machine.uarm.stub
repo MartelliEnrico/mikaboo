@@ -1,0 +1,23 @@
+{
+    "accessible-mode": false,
+    "clock-rate": 1,
+    "core-file": "@CURDIR@/kernel",
+    "devices": {
+        "terminal0": {
+            "enabled": true,
+            "file": "@CURDIR@/term0.uarm"
+        }
+    },
+    "execution-rom": "@INCDIR@/BIOS",
+    "num-ram-frames": 10240,
+    "pause-on-exc": false,
+    "pause-on-tlb": false,
+    "refresh-on-pause": false,
+    "refresh-rate": 1000,
+    "symbol-table": {
+        "asid": 0,
+        "external-stab": false,
+        "file": ""
+    },
+    "tlb-size": 16
+}
