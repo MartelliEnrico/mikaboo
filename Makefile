@@ -31,4 +31,4 @@ machine.uarm.cfg: machine.uarm.stub
 
 .PHONY: clean
 clean: 
-	rm -f *.o kernel machine.uarm.cfg term0.uarm
+	-$(RM) *.o kernel machine.uarm.cfg term0.uarm
