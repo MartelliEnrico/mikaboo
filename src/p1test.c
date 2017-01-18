@@ -198,8 +198,11 @@ void test_msg_queue(struct pcb_t *root) {
 	addokbuf("message queue: Okay\n");
 }
 
-int main(int argc, char **argv) {
+int main(int argc, char* * argv[]) {
+	int i;
 	struct pcb_t *root = proc_init();
+	struct pcb_t *pcb;
+	struct tcb_t *tcb;
 	/* initialize data structures */
 	addokbuf("proc_init done\n");
 	thread_init();
