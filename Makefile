@@ -11,14 +11,13 @@ LDFLAGS += -T $(INCDIR)/ldscripts/elf32ltsarm.h.uarmcore.x
 
 TARGET ?= phase1
 
-common_OBJS := crtso.o libuarm.o
 phase1_TEST := p1test.o
 phase1_OBJS := process.o threads.o messages.o
 
 .PHONY: all
 all: kernel
 
-kernel: $(common_OBJS) $($(TARGET)_TEST) $($(TARGET)_OBJS)
+kernel: crtso.o libuarm.o $($(TARGET)_TEST) $($(TARGET)_OBJS)
 	$(LD) $(LDFLAGS) $^ $(LOADLIBES) $(LDLIBS) -o $@
 
 p1test.o: CFLAGS := $(filter-out -Wall -Wextra,$(CFLAGS))
