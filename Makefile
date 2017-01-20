@@ -6,6 +6,7 @@ CC := arm-none-eabi-gcc
 CFLAGS += -O2 -Wall -Wextra
 CPPFLAGS += -I $(INCDIR) -I include
 TARGET_ARCH := -mcpu=arm7tdmi
+LD := arm-none-eabi-ld
 LDFLAGS += -T $(INCDIR)/ldscripts/elf32ltsarm.h.uarmcore.x
 
 TARGET ?= phase1
@@ -18,7 +19,7 @@ phase1_OBJS := process.o threads.o messages.o
 all: kernel
 
 kernel: $(common_OBJS) $($(TARGET)_TEST) $($(TARGET)_OBJS)
-	$(LINK.o) $^ $(LOADLIBES) $(LDLIBS) -o $@
+	$(LD) $(LDFLAGS) $^ $(LOADLIBES) $(LDLIBS) -o $@
 
 p1test.o: CFLAGS := $(filter-out -Wall -Wextra,$(CFLAGS))
 
