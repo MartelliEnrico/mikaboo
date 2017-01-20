@@ -42,7 +42,7 @@ int thread_free(struct tcb_t *oldthread) {
 }
 
 void thread_enqueue(struct tcb_t *new, struct list_head *queue) {
-	list_add(&new->t_next, queue);
+	list_add_tail(&new->t_next, queue);
 }
 
 struct tcb_t *thread_qhead(struct list_head *queue) {
@@ -58,7 +58,7 @@ struct tcb_t *thread_dequeue(struct list_head *queue) {
 		return NULL;
 	}
 
-	struct tcb_t *tcb = container_of(list_prev(queue), struct tcb_t, t_next);
+	struct tcb_t *tcb = container_of(list_next(queue), struct tcb_t, t_next);
 	list_del(&tcb->t_next);
 
 	return tcb;
