@@ -24,7 +24,7 @@ p1test.o: CFLAGS := $(filter-out -Wall -Wextra,$(CFLAGS))
 
 .PHONY: check
 check: kernel machine.uarm.cfg
-	uarm -c machine.uarm.cfg -e -x
+	@./uarm_termination_watcher.sh
 
 machine.uarm.cfg: machine.uarm.stub
 	sed -e "s|\@INCDIR\@|$(INCDIR)|g" -e "s|\@CURDIR\@|$(CURDIR)|g" $< > $@
