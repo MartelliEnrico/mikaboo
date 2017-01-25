@@ -18,7 +18,7 @@ int msgq_add(struct tcb_t *sender, struct tcb_t *destination, uintptr_t value) {
 		return -1;
 	}
 
-	struct msg_t *msg = container_of(list_next(&msg_free), struct msg_t, m_next);
+	struct msg_t *msg = next_msg(&msg_free);
 	list_del(&msg->m_next);
 	msg->m_sender = sender;
 	msg->m_value = value;
@@ -35,7 +35,7 @@ int msgq_get(struct tcb_t **sender, struct tcb_t *destination, uintptr_t *value)
 	struct msg_t *msg = NULL;
 
 	if(sender == NULL || *sender == NULL) {
-		msg = container_of(list_next(&destination->t_msgq), struct msg_t, m_next);
+		msg = next_msg(&destination->t_msgq);
 		if(sender != NULL) {
 			*sender = msg->m_sender;
 		}

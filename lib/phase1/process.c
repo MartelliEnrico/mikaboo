@@ -24,7 +24,7 @@ struct pcb_t *proc_alloc(struct pcb_t *p_parent) {
 		return NULL;
 	}
 
-	struct pcb_t *pcb = container_of(list_next(&pcb_free), struct pcb_t, p_siblings);
+	struct pcb_t *pcb = next_pcb(&pcb_free);
 	list_del(&pcb->p_siblings);
 	pcb->p_parent = p_parent;
 	INIT_LIST_HEAD(&pcb->p_threads);
@@ -35,7 +35,7 @@ struct pcb_t *proc_alloc(struct pcb_t *p_parent) {
 }
 
 int proc_delete(struct pcb_t *oldproc) {
-	if(! (list_empty(&oldproc->p_threads) && list_empty(&oldproc->p_children))) {
+	if(oldproc == NULL || ! list_empty(&oldproc->p_threads) || ! list_empty(&oldproc->p_children)) {
 		return -1;
 	}
 
@@ -46,9 +46,17 @@ int proc_delete(struct pcb_t *oldproc) {
 }
 
 struct pcb_t *proc_firstchild(struct pcb_t *proc) {
-	return container_of(list_next(&proc->p_children), struct pcb_t, p_siblings);
+	if(proc == NULL || list_empty(&proc->p_children)) {
+		return NULL;
+	}
+
+	return next_pcb(&proc->p_children);
 }
 
 struct tcb_t *proc_firstthread(struct pcb_t *proc) {
-	return container_of(list_next(&proc->p_threads), struct tcb_t, t_next);
+	if(proc == NULL || list_empty(&proc->p_threads)) {
+		return NULL;
+	}
+
+	return next_tcb(&proc->p_threads);
 }

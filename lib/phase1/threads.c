@@ -18,7 +18,7 @@ struct tcb_t *thread_alloc(struct pcb_t *process) {
 		return NULL;
 	}
 
-	struct tcb_t *tcb = container_of(list_next(&tcb_free), struct tcb_t, t_next);
+	struct tcb_t *tcb = next_tcb(&tcb_free);
 	list_del(&tcb->t_next);
 	tcb->t_pcb = process;
 	tcb->t_status = T_STATUS_NONE;
@@ -31,7 +31,7 @@ struct tcb_t *thread_alloc(struct pcb_t *process) {
 }
 
 int thread_free(struct tcb_t *oldthread) {
-	if(! list_empty(&oldthread->t_msgq)) {
+	if(oldthread == NULL || ! list_empty(&oldthread->t_msgq)) {
 		return -1;
 	}
 
@@ -42,24 +42,26 @@ int thread_free(struct tcb_t *oldthread) {
 }
 
 void thread_enqueue(struct tcb_t *new, struct list_head *queue) {
-	list_add_tail(&new->t_next, queue);
+	if(new != NULL && queue != NULL) {
+		list_add_tail(&new->t_sched, queue);
+	}
 }
 
 struct tcb_t *thread_qhead(struct list_head *queue) {
-	if(list_empty(queue)) {
+	if(queue == NULL || list_empty(queue)) {
 		return NULL;
 	}
 
-	return container_of(list_next(queue), struct tcb_t, t_next);
+	return next_tcb_in_q(queue);
 }
 
 struct tcb_t *thread_dequeue(struct list_head *queue) {
-	if(list_empty(queue)) {
+	if(queue == NULL || list_empty(queue)) {
 		return NULL;
 	}
 
-	struct tcb_t *tcb = container_of(list_next(queue), struct tcb_t, t_next);
-	list_del(&tcb->t_next);
+	struct tcb_t *tcb = next_tcb_in_q(queue);
+	list_del(&tcb->t_sched);
 
 	return tcb;
 }
