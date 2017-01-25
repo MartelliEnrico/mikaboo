@@ -47,12 +47,12 @@ void test_proc_alloc(struct pcb_t *root) {
 	addokbuf("proc_alloc: Okay\n");
 	for(i = 0; i < MAXPROC - 1; i++) {
 		if (list_empty(&root->p_children))
-			adderrbuf("ERROR wrong management of children list");
+			adderrbuf("ERROR wrong management of children list\n");
 		pcb = proc_firstchild(root);
 		proc_delete(pcb);
 	}
 	if (!list_empty(&root->p_children))
-		adderrbuf("ERROR wrong management of children list (extra items)");
+		adderrbuf("ERROR wrong management of children list (extra items)\n");
 	addokbuf("proc_delete: Okay\n");
 }
 
@@ -80,7 +80,7 @@ void test_proc_hierarchy(struct pcb_t *root) {
 				pcb = proc_firstchild(pcb))
 			;
 		if (proc_delete(pcb) == -1)
-			adderrbuf("ERROR proc_delete should succeed if empty p_children \n");
+			adderrbuf("ERROR proc_delete should succeed if empty p_children\n");
 		i++;
 	}
 	if (i != 15)
@@ -103,12 +103,12 @@ void test_thread_alloc(struct pcb_t *root) {
 	addokbuf("thread_alloc: Okay\n");
 	for(i = 0; i < MAXTHREAD; i++) {
 		if (list_empty(&root->p_threads))
-			adderrbuf("ERROR wrong management of thread list");
+			adderrbuf("ERROR wrong management of thread list\n");
 		tcb = proc_firstthread(root);
 		thread_free(tcb);
 	}
 	if (!list_empty(&root->p_threads))
-		adderrbuf("ERROR wrong management of thread list (extra items)");
+		adderrbuf("ERROR wrong management of thread list (extra items)\n");
 	addokbuf("thread_delete: Okay\n");
 }
 
@@ -129,7 +129,7 @@ void test_thread_queue(struct pcb_t *root) {
 	for (i = 0; i < 20; i++) {
 		struct tcb_t *ttcb = thread_dequeue(&tcbq);
 		if (ttcb == NULL)
-			adderrbuf("ERROR thread_dequeue missing elements \n");
+			adderrbuf("ERROR thread_dequeue missing elements\n");
 		if (ttcb != tcb[i])
 			adderrbuf("ERROR thread_enqueue FIFO mismatch\n");
 	}
