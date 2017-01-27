@@ -1,4 +1,5 @@
 # Project Specific
+build/
 kernel
 machine.uarm.cfg
 term0.uarm
