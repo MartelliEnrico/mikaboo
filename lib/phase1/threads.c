@@ -8,6 +8,7 @@ void thread_init(void) {
 
 	INIT_LIST_HEAD(&tcb_free);
 
+	// aggiungiamo tutti i tcb alla lista libera
 	for(int i = 0; i < MAXTHREAD; i++) {
 		list_add(&tcbs[i].t_next, &tcb_free);
 	}
@@ -18,11 +19,15 @@ struct tcb_t *thread_alloc(struct pcb_t *process) {
 		return NULL;
 	}
 
+	// prendiamo il primo tcb dalla lista libera
 	struct tcb_t *tcb = next_tcb(&tcb_free);
+	// e lo rimuoviamo
 	list_del(&tcb->t_next);
+	// settiamo il processo padre
 	tcb->t_pcb = process;
 	tcb->t_status = T_STATUS_NONE;
 	tcb->t_wait4sender = NULL;
+	// lo aggiungiamo alla lista dei thread e inizializiamo le liste
 	list_add_tail(&tcb->t_next, &process->p_threads);
 	INIT_LIST_HEAD(&tcb->t_sched);
 	INIT_LIST_HEAD(&tcb->t_msgq);
@@ -35,7 +40,9 @@ int thread_free(struct tcb_t *oldthread) {
 		return -1;
 	}
 
+	// rimuoviamo il thread dalla lista
 	list_del(&oldthread->t_next);
+	// e lo spostiamo nella lista libera
 	list_add_tail(&oldthread->t_next, &tcb_free);
 
 	return 0;
