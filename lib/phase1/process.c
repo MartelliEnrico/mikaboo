@@ -27,7 +27,7 @@ struct pcb_t *proc_alloc(struct pcb_t *p_parent) {
 	}
 
 	// prendiamo il primo pcb dalla lista libera
-	struct pcb_t *pcb = next_pcb(&pcb_free);
+	struct pcb_t *pcb = container_of(list_next(&pcb_free), struct pcb_t, p_siblings);
 	// e lo rimuoviamo
 	list_del(&pcb->p_siblings);
 	// settiamo il padre, inizializiamo le liste e lo aggiungiamo alla lista dei figli
@@ -57,7 +57,7 @@ struct pcb_t *proc_firstchild(struct pcb_t *proc) {
 		return NULL;
 	}
 
-	return next_pcb(&proc->p_children);
+	return container_of(list_next(&proc->p_children), struct pcb_t, p_siblings);
 }
 
 struct tcb_t *proc_firstthread(struct pcb_t *proc) {
@@ -65,5 +65,5 @@ struct tcb_t *proc_firstthread(struct pcb_t *proc) {
 		return NULL;
 	}
 
-	return next_tcb(&proc->p_threads);
+	return container_of(list_next(&proc->p_threads), struct tcb_t, t_next);
 }

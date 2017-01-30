@@ -59,8 +59,6 @@ struct pcb_t *proc_firstchild(struct pcb_t *proc);
 /* return the pointer to the first thread (NULL if the process has no threads) */
 struct tcb_t *proc_firstthread(struct pcb_t *proc);
 
-#define next_pcb(list) container_of(list_next((list)), struct pcb_t, p_siblings)
-
 /****************************************** THREAD ALLOCATION ****************/
 
 /* initialize the data structure */
@@ -75,8 +73,6 @@ struct tcb_t *thread_alloc(struct pcb_t *process);
 	 its process) */
 /* it fails if the message queue is not empty (returning -1) */
 int thread_free(struct tcb_t *oldthread);
-
-#define next_tcb(list) container_of(list_next((list)), struct tcb_t, t_next)
 
 /*************************** THREAD QUEUE ************************/
 
@@ -99,8 +95,6 @@ static inline void thread_outqueue(struct tcb_t *this) {
 #define for_each_thread_in_q(pos, queue) \
 	list_for_each_entry(pos, queue, t_sched)
 
-#define next_tcb_in_q(list) container_of(list_next((list)), struct tcb_t, t_sched)
-
 /*************************** MSG QUEUE ************************/
 
 /* initialize the data structure */
@@ -119,7 +113,5 @@ int msgq_add(struct tcb_t *sender, struct tcb_t *destination, uintptr_t value);
 /* return -1 if there are no messages in the queue matching the request.
 	 return 0 and store the message payload in *value otherwise. */
 int msgq_get(struct tcb_t **sender, struct tcb_t *destination, uintptr_t *value);
-
-#define next_msg(list) container_of(list_next((list)), struct msg_t, m_next)
 
 #endif

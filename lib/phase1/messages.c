@@ -20,7 +20,7 @@ int msgq_add(struct tcb_t *sender, struct tcb_t *destination, uintptr_t value) {
 	}
 
 	// prendiamo il primo msg dalla lista libera
-	struct msg_t *msg = next_msg(&msg_free);
+	struct msg_t *msg = container_of(list_next(&msg_free), struct msg_t, m_next);
 	// e lo rimuoviamo
 	list_del(&msg->m_next);
 	// settiamo sender, value e lo aggiungiamo all lista dei messaggi
@@ -41,7 +41,7 @@ int msgq_get(struct tcb_t **sender, struct tcb_t *destination, uintptr_t *value)
 	// se non conosciamo il mittente
 	if(sender == NULL || *sender == NULL) {
 		// prendiamo il primo messaggio
-		msg = next_msg(&destination->t_msgq);
+		msg = container_of(list_next(&destination->t_msgq), struct msg_t, m_next);
 		if(sender != NULL) {
 			*sender = msg->m_sender;
 		}

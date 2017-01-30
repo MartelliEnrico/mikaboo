@@ -3,13 +3,13 @@ CPLv2 */
 #ifndef _LISTX_H
 #define _LISTX_H
 
-typedef unsigned int size_t;
+typedef unsigned int size_tt;
 
 #define container_of(ptr, type, member) ({			\
 		const typeof( ((type *)0)->member ) *__mptr = (ptr);	\
 		(type *)( (char *)__mptr - offsetof(type,member) );})
 
-#define offsetof(TYPE, MEMBER) ((size_t) &((TYPE *)0)->MEMBER)
+#define offsetof(TYPE, MEMBER) ((size_tt) &((TYPE *)0)->MEMBER)
 
 struct list_head {
 	struct list_head *next, *prev;
@@ -63,14 +63,14 @@ static inline int list_empty(const struct list_head *head)
 static inline struct list_head *list_next(const struct list_head *current)
 {
 	if (list_empty(current))
-		return (struct list_head *)0;
+		return 0;
 	else
 		return current->next;
 }
 static inline struct list_head *list_prev(const struct list_head *current)
 {
 	if (list_empty(current))
-		return (struct list_head *)0;
+		return 0;
 	else
 		return current->prev;
 }
