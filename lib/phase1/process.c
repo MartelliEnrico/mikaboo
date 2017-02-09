@@ -27,9 +27,8 @@ struct pcb_t *proc_alloc(struct pcb_t *p_parent) {
 		return NULL;
 	}
 
-	// prendiamo il primo pcb dalla lista libera
+	// rimuoviamo il primo pcb dalla lista libera
 	struct pcb_t *pcb = container_of(list_next(&pcb_free), struct pcb_t, p_siblings);
-	// e lo rimuoviamo
 	list_del(&pcb->p_siblings);
 	// settiamo il padre, inizializiamo le liste e lo aggiungiamo alla lista dei figli
 	pcb->p_parent = p_parent;

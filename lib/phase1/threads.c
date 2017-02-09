@@ -19,9 +19,8 @@ struct tcb_t *thread_alloc(struct pcb_t *process) {
 		return NULL;
 	}
 
-	// prendiamo il primo tcb dalla lista libera
+	// rimuoviamo il primo tcb dalla lista libera
 	struct tcb_t *tcb = container_of(list_next(&tcb_free), struct tcb_t, t_next);
-	// e lo rimuoviamo
 	list_del(&tcb->t_next);
 	// settiamo il processo padre
 	tcb->t_pcb = process;
@@ -66,7 +65,7 @@ struct tcb_t *thread_dequeue(struct list_head *queue) {
 		return NULL;
 	}
 
-	// rimuovo il primo thread dalla lista
+	// rimuoviamo il primo thread dalla lista
 	struct tcb_t *tcb = container_of(list_next(queue), struct tcb_t, t_sched);
 	list_del(&tcb->t_sched);
 

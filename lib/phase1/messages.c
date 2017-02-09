@@ -19,9 +19,8 @@ int msgq_add(struct tcb_t *sender, struct tcb_t *destination, uintptr_t value) {
 		return -1;
 	}
 
-	// prendiamo il primo msg dalla lista libera
+	// rimuoviamo il primo msg dalla lista libera
 	struct msg_t *msg = container_of(list_next(&msg_free), struct msg_t, m_next);
-	// e lo rimuoviamo
 	list_del(&msg->m_next);
 	// settiamo sender, value e lo aggiungiamo all lista dei messaggi
 	msg->m_sender = sender;
