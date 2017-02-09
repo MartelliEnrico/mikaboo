@@ -25,7 +25,6 @@ struct tcb_t *thread_alloc(struct pcb_t *process) {
 	list_del(&tcb->t_next);
 	// settiamo il processo padre
 	tcb->t_pcb = process;
-	tcb->t_status = T_STATUS_NONE;
 	tcb->t_wait4sender = NULL;
 	// lo aggiungiamo alla lista dei thread e inizializiamo le liste
 	list_add_tail(&tcb->t_next, &process->p_threads);

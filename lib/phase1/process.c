@@ -13,6 +13,7 @@ struct pcb_t *proc_init(void) {
 		list_add(&pcbs[i].p_siblings, &pcb_free);
 	}
 
+	pcbs[0].p_parent = NULL;
 	// inizializiamo le liste del pcb root
 	INIT_LIST_HEAD(&pcbs[0].p_threads);
 	INIT_LIST_HEAD(&pcbs[0].p_children);
