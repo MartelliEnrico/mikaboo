@@ -24,6 +24,7 @@
 #include "const.h"
 #include "listx.h"
 #include "mikabooq.h"
+#include <stdint.h>
 
 void addokbuf(char *strp) {
 	  tprint(strp);

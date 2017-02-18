@@ -2,10 +2,9 @@
 #define MIKABOOQ_H
 
 #include <uARMtypes.h>
+#include <stdint.h>
 
 #include "listx.h"
-
-typedef unsigned int uintptr_t;
 
 struct pcb_t {
 	struct pcb_t * p_parent ; /* pointer to parent */
