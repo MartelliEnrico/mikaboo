@@ -51,12 +51,13 @@ int msgq_get(struct tcb_t **sender, struct tcb_t *destination, uintptr_t *value)
 		list_for_each_entry(item, &destination->t_msgq, m_next) {
 			if(item->m_sender == *sender) {
 				msg = item;
+				break;
 			}
 		}
-	}
 
-	if(msg == NULL) {
-		return -1;
+		if(msg == NULL) {
+			return -1;
+		}
 	}
 
 	// salviamo il valore
