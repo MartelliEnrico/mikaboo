@@ -1,25 +1,25 @@
 #!/usr/bin/env bash
 
-TERM=${1:-term0.uarm}
-> $TERM
+terminal=${1:-term0.uarm}
+> $terminal
 uarm -c machine.uarm.cfg -e &
-UARM_PID=$!
-trap "kill $UARM_PID 2>&1 >/dev/null" EXIT
+uarm_pid=$!
+trap "kill $uarm_pid 2>&1 >/dev/null" EXIT
 
-GREEN="\033[0;32m"
-RED="\033[0;31m"
-RESET="\033[0m"
-while IFS='' read -r LINE || [[ -n "$LINE" ]]; do
-	case $LINE in
+green="\033[0;32m"
+red="\033[0;31m"
+reset="\033[0m"
+while IFS='' read -r line || [[ -n "$line" ]]; do
+	case $line in
 		"SYSTEM HALTED.")
-			echo -e "${GREEN}${LINE}${RESET}"
+			echo -e "${green}${line}${reset}"
 			exit 0 ;;
 		"KERNEL PANIC!")
-			echo -e "${RED}${LINE}${RESET}"
+			echo -e "${red}${line}${reset}"
 			exit 1 ;;
 		"UNKNOWN SERVICE.")
-			echo -e "${RED}${LINE}" ;;
+			echo -e "${red}${line}" ;;
 		*)
-			echo $LINE ;;
+			echo $line ;;
 	esac
-done < <(tail -f $TERM)
+done < <(tail -f $terminal)
