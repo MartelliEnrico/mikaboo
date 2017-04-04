@@ -33,10 +33,10 @@ $(OBJDIR): ; mkdir -p $@
 
 .PHONY: check
 check: kernel machine.uarm.cfg
-	@./uarm_termination_watcher.sh
+	@tools/uarm_termination_watcher.sh
 
-machine.uarm.cfg: machine.uarm.stub
-	sed -e "s|\@INCDIR\@|$(INCDIR)|g" -e "s|\@CURDIR\@|$(CURDIR)|g" $< > $@
+machine.uarm.cfg: tools/machine.uarm.stub
+	sed -e "s|\@CURDIR\@|$(CURDIR)|g" $< > $@
 
 .PHONY: clean
 clean:
