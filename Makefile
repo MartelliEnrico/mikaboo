@@ -5,7 +5,7 @@ phase1_OBJS := process.o threads.o messages.o
 BASEDIR ?= /usr/local
 INCDIR := $(BASEDIR)/include/uarm
 OBJDIR := build
-VPATH := include $(INCDIR) include/sys src/phase1 tests
+VPATH := include $(INCDIR) include/sys src/phase1 src/tests
 
 CC := arm-none-eabi-gcc
 WARNING_FLAGS := -Wall -Wextra
