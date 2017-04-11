@@ -3,7 +3,8 @@ set -o pipefail
 
 terminal=${1:-term0.uarm}
 > $terminal
-uarm -c machine.uarm.cfg -e &
+echo "Starting uArm..."
+uarm -c machine.uarm.cfg -e -x --no-gui &
 uarm_pid=$!
 kill-uarm() {
 	kill $uarm_pid 2>&1 >/dev/null
