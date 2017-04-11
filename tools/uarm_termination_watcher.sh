@@ -1,10 +1,14 @@
-#!/usr/bin/env bash
+#!/usr/bin/env bash -eu
+set -o pipefail
 
 terminal=${1:-term0.uarm}
 > $terminal
 uarm -c machine.uarm.cfg -e &
 uarm_pid=$!
-trap "kill $uarm_pid 2>&1 >/dev/null" EXIT
+kill-uarm() {
+	kill $uarm_pid 2>&1 >/dev/null
+}
+trap kill-uarm EXIT
 
 green="\033[0;32m"
 red="\033[0;31m"
