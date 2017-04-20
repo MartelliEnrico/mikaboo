@@ -32,7 +32,7 @@ debug: kernel
 kernel: $(OBJECTS)
 	$(LD) $(LDFLAGS) $^ $(LOADLIBES) $(LDLIBS) -o $@
 
-$(OBJDIR)/p1test.o: WARNINGS :=
+$(OBJDIR)/$($(TARGET)_TEST): WARNINGS :=
 
 $(OBJDIR)/%.o: %.c | $(OBJDIR)
 	$(COMPILE.c) $(OUTPUT_OPTION) $<
