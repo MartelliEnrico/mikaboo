@@ -12,11 +12,12 @@ CC := $(CROSS_COMPILE)gcc
 OPTIMIZATION ?= -Ofast
 WARNINGS ?= -Wall -Wextra
 CFLAGS = $(OPTIMIZATION) $(WARNINGS)
-CPPFLAGS := -I include -isystem $(INCDIR) -idirafter include/sys
+CPPFLAGS := -I include -I $(INCDIR) -idirafter include/sys
 TARGET_ARCH := -mcpu=arm7tdmi
 LD := $(CROSS_COMPILE)ld
 LDFLAGS := -T $(INCDIR)/ldscripts/elf32ltsarm.h.uarmcore.x -nostdlib
 LDLIBS := $(INCDIR)/crtso.o $(INCDIR)/libuarm.o
+ASFLAGS := -fPIC
 
 OBJECTS := $(addprefix $(OBJDIR)/,$($(TARGET)_TEST) $($(TARGET)_OBJS))
 
@@ -39,8 +40,11 @@ $(OBJDIR)/%.o: %.c | $(OBJDIR)
 $(OBJDIR):
 	mkdir -p $@
 
-check: kernel machine.uarm.cfg
+check: kernel BIOS machine.uarm.cfg
 	tools/uarm_termination_watcher.sh
+
+BIOS: tools/BIOS.s
+	$(COMPILE.S) -o $@ $<
 
 machine.uarm.cfg: tools/machine.uarm.stub
 	sed "s|\@CURDIR\@|$(CURDIR)|g" $< > $@

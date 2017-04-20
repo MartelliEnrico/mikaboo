@@ -1,6 +1,7 @@
 # Project Specific
 build/
 kernel
+BIOS
 machine.uarm.cfg
 term0.uarm
 

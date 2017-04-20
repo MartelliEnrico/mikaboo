@@ -8,7 +8,7 @@
             "file": "@CURDIR@/term0.uarm"
         }
     },
-    "execution-rom": "@CURDIR@/tools/BIOS",
+    "execution-rom": "@CURDIR@/BIOS",
     "num-ram-frames": 10240,
     "pause-on-exc": false,
     "pause-on-tlb": false,
