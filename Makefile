@@ -40,10 +40,10 @@ $(OBJDIR)/%.o: %.c | $(OBJDIR)
 $(OBJDIR):
 	mkdir -p $@
 
-check: kernel BIOS machine.uarm.cfg
+check: kernel bios machine.uarm.cfg
 	tools/uarm_termination_watcher.sh
 
-BIOS: tools/BIOS.s
+bios: tools/bios.S
 	$(COMPILE.S) -o $@ $<
 
 machine.uarm.cfg: tools/machine.uarm.stub
@@ -53,4 +53,4 @@ clean:
 	-$(RM) $(OBJDIR)/*.o kernel
 
 distclean: clean
-	-$(RM) term0.uarm machine.uarm.cfg
+	-$(RM) bios term0.uarm machine.uarm.cfg
