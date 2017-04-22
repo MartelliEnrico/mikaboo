@@ -21,7 +21,7 @@ ASFLAGS := -fPIC
 
 OBJECTS := $(addprefix $(OBJDIR)/,$($(TARGET)_TEST) $($(TARGET)_OBJS))
 
-.PHONY: all debug check clean distclean
+.PHONY: all debug check clean distclean help
 
 all: kernel
 
@@ -54,3 +54,30 @@ clean:
 
 distclean: clean
 	-$(RM) bios term0.uarm machine.uarm.cfg
+
+help:
+	@echo "mikaboo - group lso17az05"
+	@echo "Usage: make [TARGETS] [OPTIONS]"
+	@echo
+	@echo "Available Targets:"
+	@echo "  all            Builds the kernel for release"
+	@echo "                 This is the default target"
+	@echo "  debug          Builds the kernel with debug configuration"
+	@echo "  check          Run the automatic test using the uarm emulator"
+	@echo "  clean          Removes build files generated from 'all' or 'debug'"
+	@echo "  distclean      Removes utility files generated from 'check'"
+	@echo "  help           This help message"
+	@echo
+	@echo "Available Options:"
+	@echo "  TARGET         Choose the phase to build"
+	@echo "                 Default is '$(TARGET)'"
+	@echo "  BASEDIR        The base directory where uarm was installed"
+	@echo "                 Default is '$(BASEDIR)'"
+	@echo "  CROSS_COMPILE  The prefix of the installed build tools"
+	@echo "                 Default is '$(CROSS_COMPILE)'"
+	@echo "  OPTIMIZATION   The optimization flags used for release build"
+	@echo "                 This is overridden for the debug build"
+	@echo "                 Default is '$(OPTIMIZATION)'"
+	@echo "  WARNINGS       The warnings flags used to build the kernel"
+	@echo "                 Default is '$(WARNINGS)'"
+	@echo
