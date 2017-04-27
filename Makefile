@@ -1,11 +1,13 @@
-TARGET ?= phase1
+TARGET ?= phase2
 phase1_TEST := p1test.o
 phase1_OBJS := process.o threads.o messages.o
+phase2_TEST := p2pretest1.o
+phase2_OBJS := nucleus.o ssicalls.o $(phase1_OBJS)
 
 BASEDIR ?= /usr/local
 INCDIR := $(BASEDIR)/include/uarm
 OBJDIR := build
-VPATH := include $(INCDIR) include/sys src/phase1 src/tests
+VPATH := include $(INCDIR) include/sys src/phase1 src/phase2 src/tests
 
 CROSS_COMPILE ?= arm-none-eabi-
 CC := $(CROSS_COMPILE)gcc
@@ -70,6 +72,7 @@ help:
 	@echo
 	@echo "Available Options:"
 	@echo "  TARGET         Choose the phase to build"
+	@echo "                 Available options are ['phase1', 'phase2']"
 	@echo "                 Default is '$(TARGET)'"
 	@echo "  BASEDIR        The base directory where uarm was installed"
 	@echo "                 Default is '$(BASEDIR)'"
