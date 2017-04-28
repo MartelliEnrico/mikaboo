@@ -26,11 +26,11 @@ typedef uintptr_t memaddr;
 typedef uintptr_t cputime;
 typedef uintptr_t devaddr;
 
-extern void *SSI;
+extern struct tcb_t *SSI;
 
-#define msgsend(dest,payload) (SYSCALL(SYS_SEND,(unsigned int) (dest),(unsigned int) (payload),0))
+#define msgsend(dest,payload) SYSCALL(SYS_SEND,(unsigned int) (dest),(unsigned int) (payload),0)
 
-#define msgrecv(source,reply) (((struct tcb_t *) SYSCALL(SYS_RECV,(unsigned int) (source),(unsigned int) (reply),0)))
+#define msgrecv(source,reply) (struct tcb_t *)SYSCALL(SYS_RECV,(unsigned int) (source),(unsigned int) (reply),0)
 
 static inline uintptr_t geterrno(void) {
 	uintptr_t retval;
@@ -38,7 +38,7 @@ static inline uintptr_t geterrno(void) {
 		uintptr_t reqtag;
 	} req = {GET_ERRNO};
 	msgsend(SSI, &req);
-	msgrecv(SSI, &retval);
+	(void)msgrecv(SSI, &retval);
 	return retval;
 }
 
@@ -49,7 +49,7 @@ static inline struct tcb_t *create_process(state_t *s) {
 		state_t *s;
 	} req = {CREATE_PROCESS, s};
 	msgsend(SSI, &req);
-	msgrecv(SSI, &retval);
+	(void)msgrecv(SSI, &retval);
 	return retval;
 }
 
@@ -60,7 +60,7 @@ static inline struct tcb_t *create_thread(state_t *s) {
 		state_t *s;
 	} req = {CREATE_THREAD, s};
 	msgsend(SSI, &req);
-	msgrecv(SSI, &retval);
+	(void)msgrecv(SSI, &retval);
 	return retval;
 }
 
@@ -69,7 +69,7 @@ static inline void terminate_process(void) {
 		uintptr_t reqtag;
 	} req = {TERMINATE_PROCESS};
 	msgsend(SSI, &req);
-	msgrecv(SSI, NULL);
+	(void)msgrecv(SSI, NULL);
 }
 
 static inline void terminate_thread(void) {
@@ -77,7 +77,7 @@ static inline void terminate_thread(void) {
 		uintptr_t reqtag;
 	} req = {TERMINATE_THREAD};
 	msgsend(SSI, &req);
-	msgrecv(SSI, NULL);
+	(void)msgrecv(SSI, NULL);
 }
 
 static inline struct tcb_t *setpgmmgr(struct tcb_t *s) {
@@ -87,7 +87,7 @@ static inline struct tcb_t *setpgmmgr(struct tcb_t *s) {
 		struct tcb_t *s;
 	} req = {SETPGMMGR, s};
 	msgsend(SSI, &req);
-	msgrecv(SSI, &retval);
+	(void)msgrecv(SSI, &retval);
 	return retval;
 }
 
@@ -98,7 +98,7 @@ static inline struct tcb_t *settlbmgr(struct tcb_t *s) {
 		struct tcb_t *s;
 	} req = {SETTLBMGR, s};
 	msgsend(SSI, &req);
-	msgrecv(SSI, &retval);
+	(void)msgrecv(SSI, &retval);
 	return retval;
 }
 
@@ -109,7 +109,7 @@ static inline struct tcb_t *setsysmgr(struct tcb_t *s) {
 		struct tcb_t *s;
 	} req = {SETSYSMGR, s};
 	msgsend(SSI, &req);
-	msgrecv(SSI, &retval);
+	(void)msgrecv(SSI, &retval);
 	return retval;
 }
 
@@ -119,7 +119,7 @@ static inline cputime getcputime(void) {
 		uintptr_t reqtag;
 	} req = {GET_CPUTIME};
 	msgsend(SSI, &req);
-	msgrecv(SSI, &retval);
+	(void)msgrecv(SSI, &retval);
 	return retval;
 }
 
@@ -128,7 +128,7 @@ static inline void waitforclock(void) {
 		uintptr_t reqtag;
 	} req = {WAIT_FOR_CLOCK};
 	msgsend(SSI, &req);
-	msgrecv(SSI, NULL);
+	(void)msgrecv(SSI, NULL);
 }
 
 static inline unsigned int do_io(devaddr device,  uintptr_t command, uintptr_t data1, uintptr_t data2) {
@@ -141,7 +141,7 @@ static inline unsigned int do_io(devaddr device,  uintptr_t command, uintptr_t d
 		uintptr_t data2;
 	} req = { DO_IO, device, command, data1, data2};
 	msgsend(SSI, &req);
-	msgrecv(SSI, &retval);
+	(void)msgrecv(SSI, &retval);
 	return retval;
 }
 
@@ -158,7 +158,7 @@ static inline struct pcb_t *get_processid(struct tcb_t *s) {
 		struct tcb_t *s;
 	} req = {GET_PROCESSID, s};
 	msgsend(SSI, &req);
-	msgrecv(SSI, &retval);
+	(void)msgrecv(SSI, &retval);
 	return retval;
 }
 
@@ -169,7 +169,7 @@ static inline struct pcb_t *get_parentprocid(struct pcb_t *s) {
 		struct pcb_t *s;
 	} req = {GET_PARENTPROCID, s};
 	msgsend(SSI, &req);
-	msgrecv(SSI, &retval);
+	(void)msgrecv(SSI, &retval);
 	return retval;
 }
 
@@ -179,7 +179,7 @@ static inline struct tcb_t *get_mythreadid(void) {
 		uintptr_t reqtag;
 	} req = {GET_MYTHREADID};
 	msgsend(SSI, &req);
-	msgrecv(SSI, &retval);
+	(void)msgrecv(SSI, &retval);
 	return retval;
 }
 

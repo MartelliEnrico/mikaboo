@@ -29,8 +29,7 @@ CPLv2 */
 
 #define SSICALL_DEFINEx(x, name, ...)					\
 	static inline void *SSIC##name(__MAP(x,__SC_DECL,__VA_ARGS__));	\
-	void *ssi##name(void *params)					\
-	{								\
+	void *ssi##name(void *params) {					\
 		struct i_##name {					\
 			void *rt; __MAPS(x, __SC_DECL, __VA_ARGS__)	\
 		};							\
@@ -39,19 +38,21 @@ CPLv2 */
 	}								\
 	static inline void *SSIC##name(__MAP(x,__SC_DECL,__VA_ARGS__))
 
-void *ssi_get_errno(void); // GET_ERRNO
+void ssi_handler();
+
+void *ssi_get_errno(); // GET_ERRNO
 void *ssi_create_process(void *); // CREATE_PROCESS
 void *ssi_create_thread(void *); // CREATE_THREAD
-void *ssi_terminate_process(void); // TERMINATE_PROCESS
-void *ssi_terminate_thread(void); // TERMINATE_THREAD
+void *ssi_terminate_process(); // TERMINATE_PROCESS
+void *ssi_terminate_thread(); // TERMINATE_THREAD
 void *ssi_setpgmmgr(void *); // SETPGMMGR
 void *ssi_settlbmgr(void *); // SETTLBMGR
 void *ssi_setsysmgr(void *); // SETSYSMGR
-void *ssi_get_cputime(void); // GET_CPUTIME
-void *ssi_wait_for_clock(void); // WAIT_FOR_CLOCK
+void *ssi_get_cputime(); // GET_CPUTIME
+void *ssi_wait_for_clock(); // WAIT_FOR_CLOCK
 void *ssi_do_io(void *); // DO_IO
 void *ssi_get_processid(void *); // GET_PROCESSID
 void *ssi_get_parentprocid(void *); // GET_PARENTPROCID
-void *ssi_get_mythreadid(void); // GET_MYTHREADID
+void *ssi_get_mythreadid(); // GET_MYTHREADID
 
 #endif

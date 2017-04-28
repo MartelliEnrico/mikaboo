@@ -28,6 +28,8 @@
 
 #define QPAGE 1024
 #define TERM0ADDR               0x240
+#define CLOCKINTERVAL 100000
+#define PRIVINSTR 0
 
 static struct tcb_t *printid;
 

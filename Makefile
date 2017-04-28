@@ -2,7 +2,7 @@ TARGET ?= phase2
 phase1_TEST := p1test.o
 phase1_OBJS := process.o threads.o messages.o
 phase2_TEST := p2pretest1.o
-phase2_OBJS := nucleus.o ssicalls.o $(phase1_OBJS)
+phase2_OBJS := nucleus.o ssicalls.o exceptions.o interrupts.o scheduler.o $(phase1_OBJS)
 
 BASEDIR ?= /usr/local
 INCDIR := $(BASEDIR)/include/uarm
