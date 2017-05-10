@@ -13,7 +13,7 @@
 #define GUARD(cond) if(!(cond)) PANIC();
 
 struct pcb_t *ROOT;
-struct tcb_t *SSI;
+void *SSI;
 struct tcb_t *TEST;
 
 static void init_handler(memaddr addr, void handler()) {
@@ -61,7 +61,7 @@ int main() {
 	kernel.start_pseudo_tick = 0;
 	kernel.current_thread_tod = 0;
 
-	launch_thread(SSI, ssi_handler);
+	launch_thread((struct tcb_t *)SSI, ssi_handler);
 	launch_thread(TEST, test);
 
 	kernel.start_pseudo_tick = getTODLO();
