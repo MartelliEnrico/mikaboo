@@ -6,7 +6,7 @@ phase2_OBJS := nucleus.o ssicalls.o exceptions.o interrupts.o scheduler.o $(phas
 
 BASEDIR ?= /usr/local
 INCDIR := $(BASEDIR)/include/uarm
-OBJDIR := build
+BUILDDIR := build
 VPATH := include $(INCDIR) include/sys src/phase1 src/phase2 src/tests
 
 CROSS_COMPILE ?= arm-none-eabi-
@@ -20,27 +20,32 @@ LD := $(CROSS_COMPILE)ld
 LDFLAGS := -T $(INCDIR)/ldscripts/elf32ltsarm.h.uarmcore.x -nostdlib
 LDLIBS := $(INCDIR)/crtso.o $(INCDIR)/libuarm.o
 ASFLAGS := -fPIC
+POSTCOMPILE = @mv -f $(BUILDDIR)/$*.Td $(BUILDDIR)/$*.d && touch $@
+DEPFLAGS = -MT $@ -MMD -MP -MF $(BUILDDIR)/$*.Td
 
-OBJECTS := $(addprefix $(OBJDIR)/,$($(TARGET)_TEST) $($(TARGET)_OBJS))
+OBJS := $(addprefix $(BUILDDIR)/,$($(TARGET)_TEST) $($(TARGET)_OBJS))
+DEPS := $(OBJS:.o=.d)
 
-.PHONY: all debug check clean distclean help
+$(shell mkdir -p $(BUILDDIR) >/dev/null)
+
+.PHONY: all check clean distclean help
 
 all: kernel
 
-debug: OPTIMIZATION := -Og
-debug: CFLAGS += -g3
-debug: kernel
-
-kernel: $(OBJECTS)
+kernel: $(OBJS)
 	$(LD) $(LDFLAGS) $^ $(LOADLIBES) $(LDLIBS) -o $@
 
-$(OBJDIR)/$($(TARGET)_TEST): WARNINGS :=
+$(BUILDDIR)/$($(TARGET)_TEST): WARNINGS := $(EMPTY)
 
-$(OBJDIR)/%.o: %.c | $(OBJDIR)
-	$(COMPILE.c) $(OUTPUT_OPTION) $<
+$(BUILDDIR)/%.o: %.c
+$(BUILDDIR)/%.o: %.c $(BUILDDIR)/%.d
+	$(COMPILE.c) $(DEPFLAGS) $(OUTPUT_OPTION) $<
+	$(POSTCOMPILE)
 
-$(OBJDIR):
-	mkdir -p $@
+$(BUILDDIR)/%.d: ;
+.PRECIOUS: $(BUILDDIR)/%.d
+
+-include $(DEPS)
 
 check: kernel bios machine.uarm.cfg
 	tools/uarm_termination_watcher.sh
@@ -52,7 +57,7 @@ machine.uarm.cfg: tools/machine.uarm.stub
 	sed "s|\@CURDIR\@|$(CURDIR)|g" $< > $@
 
 clean:
-	-$(RM) $(OBJDIR)/*.o kernel
+	-$(RM) $(BUILDDIR)/*.o $(BUILDDIR)/*.d kernel
 
 distclean: clean
 	-$(RM) bios term0.uarm machine.uarm.cfg
