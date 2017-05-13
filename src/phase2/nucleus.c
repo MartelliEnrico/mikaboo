@@ -2,7 +2,6 @@
 #include <libuarm.h>
 #include <uARMtypes.h>
 
-#include "kernel.h"
 #include "nucleus.h"
 #include "mikabooq.h"
 #include "ssicalls.h"
@@ -21,20 +20,21 @@ unsigned int current_thread_tod;
 unsigned int pseudo_tick;
 unsigned int start_pseudo_tick;
 
-struct pcb_t *root_pcb;
 void *SSI;
-struct tcb_t *test_tcb;
+
+struct pcb_t *root_pcb;
+struct pcb_t *test_pcb;
 
 static void init_handler(memaddr addr, void handler()) {
-	state_t* mem = (state_t*) addr;
+	state_t *mem = (state_t *)addr;
 	STST(mem);
 	mem->pc = (memaddr) handler;
 	mem->sp = RAM_TOP;
 	mem->cpsr = STATUS_ALL_INT_DISABLE(mem->cpsr | STATUS_SYS_MODE);
 }
 
-static void launch_thread(struct tcb_t *thread, void handler()) {
-	struct pcb_t *process;
+static void launch_thread(struct pcb_t *process, void handler()) {
+	struct tcb_t *thread;
 	GUARD(process = proc_alloc(root_pcb));
 	GUARD(thread = thread_alloc(process));
 	thread->t_s.pc = (memaddr) handler;
@@ -64,11 +64,10 @@ int main() {
 	soft_block_count = 0;
 	current_thread = NULL;
 	pseudo_tick = 0;
-	start_pseudo_tick = 0;
 	current_thread_tod = 0;
 
-	launch_thread((struct tcb_t *)SSI, ssi_handler);
-	launch_thread(test_tcb, test);
+	launch_thread(SSI, ssi_handler);
+	launch_thread(test_pcb, test);
 
 	start_pseudo_tick = getTODLO();
 

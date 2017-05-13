@@ -2,9 +2,16 @@
 
 #include "const.h"
 #include "listx.h"
-#include "kernel.h"
 #include "mikabooq.h"
 #include "scheduler.h"
+
+extern struct list_head ready_list;
+extern unsigned int thread_count;
+extern unsigned int soft_block_count;
+extern struct tcb_t *current_thread;
+extern unsigned int current_thread_tod;
+extern unsigned int pseudo_tick;
+extern unsigned int start_pseudo_tick;
 
 static void tick(int slice) {
 	// update clock references
