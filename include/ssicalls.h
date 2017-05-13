@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stdint.h>
+
 #define __MAP0(m,...)
 #define __MAP1(m,t,a) m(t,a)
 #define __MAP2(m,t,a,...) m(t,a), __MAP1(m,__VA_ARGS__)
@@ -17,7 +19,7 @@
 #define __SC_DECL(t, a)	t a
 #define __SC_ARGS(t, a)	i->a
 
-#define SSICALL_DEFINE0(sname)	void *ssi_##sname(void *params __attribute__((unused)))
+#define SSICALL_DEFINE0(sname)	uintptr_t ssi_##sname(void)
 
 #define SSICALL_DEFINE1(name, ...) SSICALL_DEFINEx(1, _##name, __VA_ARGS__)
 #define SSICALL_DEFINE2(name, ...) SSICALL_DEFINEx(2, _##name, __VA_ARGS__)
@@ -25,28 +27,28 @@
 #define SSICALL_DEFINE4(name, ...) SSICALL_DEFINEx(4, _##name, __VA_ARGS__)
 
 #define SSICALL_DEFINEx(x, name, ...)					\
-	static inline void *SSIC##name(__MAP(x,__SC_DECL,__VA_ARGS__)) __attribute__((always_inline));	\
-	void *ssi##name(void *params) {					\
+	static inline uintptr_t SSIC##name(__MAP(x,__SC_DECL,__VA_ARGS__)) __attribute__((always_inline));	\
+	uintptr_t ssi##name(void *params) {				\
 		struct {						\
-			void *rt; __MAPS(x, __SC_DECL, __VA_ARGS__)	\
+			uintptr_t rt; __MAPS(x, __SC_DECL, __VA_ARGS__)	\
 		} *i = params;						\
 		return SSIC##name(__MAP(x,__SC_ARGS,__VA_ARGS__));	\
 	}								\
-	static inline void *SSIC##name(__MAP(x,__SC_DECL,__VA_ARGS__))
+	static inline uintptr_t SSIC##name(__MAP(x,__SC_DECL,__VA_ARGS__))
 
 void ssi_handler();
 
-void *ssi_get_errno(); // GET_ERRNO
-void *ssi_create_process(); // CREATE_PROCESS
-void *ssi_create_thread(); // CREATE_THREAD
-void *ssi_terminate_process(); // TERMINATE_PROCESS
-void *ssi_terminate_thread(); // TERMINATE_THREAD
-void *ssi_setpgmmgr(); // SETPGMMGR
-void *ssi_settlbmgr(); // SETTLBMGR
-void *ssi_setsysmgr(); // SETSYSMGR
-void *ssi_get_cputime(); // GET_CPUTIME
-void *ssi_wait_for_clock(); // WAIT_FOR_CLOCK
-void *ssi_do_io(); // DO_IO
-void *ssi_get_processid(); // GET_PROCESSID
-void *ssi_get_parentprocid(); // GET_PARENTPROCID
-void *ssi_get_mythreadid(); // GET_MYTHREADID
+uintptr_t ssi_get_errno(); // GET_ERRNO
+uintptr_t ssi_create_process(); // CREATE_PROCESS
+uintptr_t ssi_create_thread(); // CREATE_THREAD
+uintptr_t ssi_terminate_process(); // TERMINATE_PROCESS
+uintptr_t ssi_terminate_thread(); // TERMINATE_THREAD
+uintptr_t ssi_setpgmmgr(); // SETPGMMGR
+uintptr_t ssi_settlbmgr(); // SETTLBMGR
+uintptr_t ssi_setsysmgr(); // SETSYSMGR
+uintptr_t ssi_get_cputime(); // GET_CPUTIME
+uintptr_t ssi_wait_for_clock(); // WAIT_FOR_CLOCK
+uintptr_t ssi_do_io(); // DO_IO
+uintptr_t ssi_get_processid(); // GET_PROCESSID
+uintptr_t ssi_get_parentprocid(); // GET_PARENTPROCID
+uintptr_t ssi_get_mythreadid(); // GET_MYTHREADID
