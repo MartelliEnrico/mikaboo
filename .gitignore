@@ -1,3 +1,5 @@
 build/
 machine.uarm.cfg
 term0.uarm
+kernel
+bios

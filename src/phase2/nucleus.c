@@ -12,30 +12,37 @@
 
 #define GUARD(cond) if(!(cond)) PANIC();
 
-struct pcb_t *ROOT;
+struct list_head ready_list;
+struct list_head wait_list;
+unsigned int thread_count;
+unsigned int soft_block_count;
+struct tcb_t *current_thread;
+unsigned int current_thread_tod;
+unsigned int pseudo_tick;
+unsigned int start_pseudo_tick;
+
+struct pcb_t *root_pcb;
 void *SSI;
-struct tcb_t *TEST;
+struct tcb_t *test_tcb;
 
 static void init_handler(memaddr addr, void handler()) {
 	state_t* mem = (state_t*) addr;
 	STST(mem);
-
 	mem->pc = (memaddr) handler;
 	mem->sp = RAM_TOP;
 	mem->cpsr = STATUS_ALL_INT_DISABLE(mem->cpsr | STATUS_SYS_MODE);
 }
 
 static void launch_thread(struct tcb_t *thread, void handler()) {
-	struct pcb_t *process = proc_alloc(ROOT);
-	GUARD(process != NULL);
-	thread = thread_alloc(process);
-	GUARD(thread != NULL);
+	struct pcb_t *process;
+	GUARD(process = proc_alloc(root_pcb));
+	GUARD(thread = thread_alloc(process));
 	thread->t_s.pc = (memaddr) handler;
 	thread->t_s.sp = RAM_TOP - FRAME_SIZE;
 	thread->t_s.cpsr = STATUS_ALL_INT_ENABLE(thread->t_s.cpsr) | STATUS_SYS_MODE;
 	thread->t_s.CP15_Control = CP15_DISABLE_VM(thread->t_s.CP15_Control);
-	thread_enqueue(thread, &kernel.ready);
-	kernel.thread_count++;
+	thread_enqueue(thread, &ready_list);
+	thread_count++;
 }
 
 extern void test();
@@ -46,25 +53,24 @@ int main() {
 	init_handler(PGMTRAP_NEWAREA, pgmtrap_handler);
 	init_handler(SYSBK_NEWAREA, sysbk_handler);
 
-	ROOT = proc_init();
-	GUARD(ROOT != NULL);
+	GUARD(root_pcb = proc_init());
 	thread_init();
 	msgq_init();
 
-	INIT_LIST_HEAD(&kernel.ready);
-	INIT_LIST_HEAD(&kernel.wait);
+	INIT_LIST_HEAD(&ready_list);
+	INIT_LIST_HEAD(&wait_list);
 
-	kernel.thread_count = 0;
-	kernel.soft_block_count = 0;
-	kernel.current_thread = NULL;
-	kernel.pseudo_tick = 0;
-	kernel.start_pseudo_tick = 0;
-	kernel.current_thread_tod = 0;
+	thread_count = 0;
+	soft_block_count = 0;
+	current_thread = NULL;
+	pseudo_tick = 0;
+	start_pseudo_tick = 0;
+	current_thread_tod = 0;
 
 	launch_thread((struct tcb_t *)SSI, ssi_handler);
-	launch_thread(TEST, test);
+	launch_thread(test_tcb, test);
 
-	kernel.start_pseudo_tick = getTODLO();
+	start_pseudo_tick = getTODLO();
 
 	scheduler();
 

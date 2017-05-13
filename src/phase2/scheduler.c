@@ -6,46 +6,41 @@
 #include "mikabooq.h"
 #include "scheduler.h"
 
-static void tick() {
-	kernel.pseudo_tick += getTODLO() - kernel.start_pseudo_tick;
-	kernel.start_pseudo_tick = getTODLO();
-	kernel.current_thread_tod = getTODLO();
+static void tick(int slice) {
+	// update clock references
+	unsigned int clock = getTODLO();
+	pseudo_tick += clock - start_pseudo_tick;
+	start_pseudo_tick = current_thread_tod = clock;
+	// update timer
+	if(pseudo_tick >= SCHED_PSEUDO_CLOCK) {
+		setTIMER(1);
+	} else {
+		setTIMER(MIN(
+			SCHED_TIME_SLICE - slice,
+			SCHED_PSEUDO_CLOCK - pseudo_tick));
+	}
+	// load state for current thread
+	LDST(&current_thread->t_s);
 }
 
 void scheduler() {
-	if(kernel.current_thread == NULL) {
-		if(list_empty(&kernel.ready)) {
-			if(kernel.thread_count == 1) {
+	if(current_thread == NULL) {
+		if(list_empty(&ready_list)) {
+			if(thread_count == 1) {
 				HALT();
-			} else if(kernel.soft_block_count == 0) {
+			} else if(soft_block_count == 0) {
 				PANIC();
 			} else {
 				setSTATUS(STATUS_ALL_INT_ENABLE(getSTATUS()));
 				WAIT();
 			}
 		} else {
-			kernel.current_thread = thread_dequeue(&kernel.ready);
-			kernel.current_thread->t_status = 0;
-			tick();
-			if(kernel.pseudo_tick >= SCHED_PSEUDO_CLOCK) {
-				setTIMER(1);
-			} else {
-				setTIMER(MIN(
-					SCHED_TIME_SLICE,
-					SCHED_PSEUDO_CLOCK - kernel.pseudo_tick));
-			}
-			LDST(&kernel.current_thread->t_s);
+			current_thread = thread_dequeue(&ready_list);
+			current_thread->t_status = 0;
+			tick(0);
 			PANIC();
 		}
 	} else {
-		tick();
-		if(kernel.pseudo_tick >= SCHED_PSEUDO_CLOCK) {
-			setTIMER(1);
-		} else {
-			setTIMER(MIN(
-				SCHED_TIME_SLICE - kernel.current_thread->t_status,
-				SCHED_PSEUDO_CLOCK - kernel.pseudo_tick));
-		}
-		LDST(&kernel.current_thread->t_s);
+		tick(current_thread->t_status);
 	}
 }
